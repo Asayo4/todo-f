@@ -42,13 +42,13 @@ export default {
       });
     });
   },
-  getTodo() {
+  async getTodo() {
     let data = [];
-    const todo = axios.get(
+    const todo = await axios.get(
       "https://radiant-cove-15822.herokuapp.com/api/todo"
     );
     for (let i = 0; i < todo.data.data.length; i++) {
-      axios
+      await axios
       .get(
         "https://radiant-cove-15822.herokuapp.com/api/to/" +
         todo.data.data[i].id
