@@ -28,40 +28,25 @@
 <script>
 import axios from "axios";
 export default {
-  del(index) {
-    axios
-    .delete(
-      "https://radiant-cove-15822.herokuapp.com/api/todo/" +
-        this.todo[index].item.id
-    )
-    .then((response) => {
-      console.log(response);
-      this.$router.go({
-        path: this.$router.currentRoutepath,
-        force: true,
-      });
-    });
+  props: ["id"],
+  data: function() {
+    return {
+      todos: []
+      .then((res) => {
+        this.todos = res.data;
+      })
+    }
   },
-  async getTodo() {
-    let data = [];
-    const todo = await axios.get(
-      "https://radiant-cove-15822.herokuapp.com/api/todo"
-    );
-    for (let i = 0; i < todo.data.data.length; i++) {
-      await axios
-      .get(
-        "https://radiant-cove-15822.herokuapp.com/api/to/" +
-        todo.data.data[i].id
-      )
-      .then((response) => {
-        data.push(response.data);
+  methods: {
+    getTodos() {
+      axios.get("https://radiant-cove-15822.herokuapp.com/api/todo")
+      .then((res) => {
+        this.todos = res.data;
       });
     }
-    this.todo =data;
-    console.log(this.todo);
   },
-  created() {
-    this.getTodo();
+  mounted() {
+    this.getTodos();
   }
 };
 </script>
@@ -82,12 +67,12 @@ export default {
 }
 
 .card1 {
-  background-color: whitesmoke;
+  background-color:  #1d3781 ;
   padding: 20px;
 }
 
 .title {
-
+  color: aliceblue;
 }
 
 .contents {
@@ -99,7 +84,7 @@ export default {
   width: 50%;
   height: 40px;
   border-radius: 5px;
-  border: 1px solid black;
+  border: 1px solid #081535;
   background: whitesmoke;
 }
 
@@ -107,10 +92,10 @@ export default {
   width: 50px;
   text-align: center;
   padding: 10px 0;
-  color: black;
+  color: #081535;
   background-color: whitesmoke;
   border-radius: 5px;
-  border: 1px solid black;
+  border: 1px solid #081535;
   margin: 0 60px;
 }
 
