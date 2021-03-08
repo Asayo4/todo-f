@@ -1,41 +1,36 @@
 <template>
   <div>
     <div class="card2">
+      <h3>Your Todo Lists!</h3>
       <div v-for="(value, index) in todos" :key="index">
-        <div class="todo-list">
-          <h3>Your Todo Lists!</h3>
-          <div class="flex">
-             <p class="id">{{value.id}}.</p>
-             <input type="text" :value="todo">
-             <button id="update" @click="putTodo(todo.id)">Update</button>
-             <button id="del" @click="delTodo(todo.id)">Delete</button>
-           </div>
-         </div>
+        <div class="flex">
+           <p class="id">{{ value.id }}.</p>
+           <input type="text" {{ value.todo }}>
+           <button id="update" @click="putTodo(todo.id)">Update</button>
+           <button id="del" @click="delTodo(todo.id)">Delete</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
 export default {
-  props: {
-    id: String,
-  },
   data: function() {
     return {
-      todo: {}
+      todos: []
     }
   },
   methods: {
     getTodo() {
-      axios.get("https://radiant-cove-15822.herokuapp.com/api/todo/" + this.todo.id)
-        .them((res) => {
-          this.todo = res.todo;
+      axios.get("https://radiant-cove-15822.herokuapp.com/api/todo" + this.todos.id)
+        .then((res) =>{
+          this.todo = res.data;
         });
     },
     putTodo() {
-      axios.put("https://radiant-cove-15822.herokuapp.com/api/to/" + this.todo.id, this.todo)
+      axios.put("https://radiant-cove-15822.herokuapp.com/api/todo/" + this.todo.id, this.todo)
         .then((res) => {
           console.log(res);
           alert("Update successfully");

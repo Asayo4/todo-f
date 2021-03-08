@@ -100,6 +100,7 @@ input, select {
     vertical-align:middle;
 }
 
+/* 背景色 */
 html {
     background: #2c2b4b;
 }
