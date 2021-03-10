@@ -7,8 +7,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   plugins: [createPersistedState],
   state: {
-    content: "",
-    id: ""
+    todos: [
+      { id:"", todo:"" }
+    ]
   },
   mutations: {
     changeTodo(state, payload) {
@@ -16,8 +17,8 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    changeTodo({ commit }, content) {
-      commit("changeTodo", content);
+    changeTodo({ commit }, todos) {
+      commit("changeTodo", todos);
     }
   },
   modules: {

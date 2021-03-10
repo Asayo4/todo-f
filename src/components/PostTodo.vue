@@ -4,7 +4,7 @@
     <div class="card1">
       <h1 class="title">Todo List</h1>
       <div class="contents">
-        <input type="text" placeholder="What should your do?"  v-model="todo"/>
+        <input type="text" placeholder="What should your do?"  v-model="todo_form"/>
         <button id="add" @click="post()">add</button>
       </div>
     </div>
@@ -12,12 +12,12 @@
       <h3>Your Todo Lists!</h3>
       <div class="flex">
         <div>
-          <div v-for="(todo, todo_id) in todos" :key="todo_id">
-            <p class="id">{{ todo_id }}.</p>
-            <input class="todoContents" :value="todo"/>
+          <div v-for="(todo, id) in todos" :key="id">
+            <p class="id">{{ todo.id }}.</p>
+            <input class="todoContents" :value="todo.todo"/>
+            <button id="update" @click="put(todo)">Update</button>
+            <button id="del" @click="del(todo)">Delete</button>
           </div>
-          <button id="update" @click="put(todo_id)">Update</button>
-          <button id="del" @click="del(todo_id)">Delete</button>
         </div>
       </div>
     </div>
@@ -27,45 +27,29 @@
 
 <script>
 import axios from 'axios';
+
 export default {
-  props: {
-    todo_id: String,
-  },
   data() {
     return {
-      todos: [{todo_id:"", content:""}],
-      todo: "",
+      todos: [],
+      todo_form: "",
     };
   },
   methods: {
-    getTodo() {
-       let content = [];
-       const todos = axios.get(
-         "https://radiant-cove-15822.herokuapp.com/api/todo/"
-       );
-       for (let i = 0; i < todos.content.content.todo_id; i++) {
-         axios
-           .get("https://radiant-cove-15822.herokuapp.com/api/todo/" + todos.content.content[i].id
-           )
-           .then((res) => {
-             content.push(res.content);
-           })
-       }
-    },
-    
     post() {
-      if (this.content === "") {
+      if (this.todo_form === "") {
         alert("Please enter the contents.");
       } else {
         axios
-          .post("https://radiant-cove-15822.herokuapp.com/api/todo/", {
-            todo_id: this.$store.state.todo_id,
-            content: this.content,
+          .post("https://radiant-cove-15822.herokuapp.com/api/todo", {
+            id: this.$store.state.id,
+            todo: this.todo_form,
           })
           .then((res) => {
-            console.log(res);
+            console.log(JSON.stringify(res));
             alert("Posted successfully.");
             this.todo = "";
+            this.get()
             this.$router.go({
               path: this.$router.currentRoute.path,
               force: true,
@@ -73,58 +57,45 @@ export default {
           });
       }
     },
-    put(todo_id) {
-      if (!this.active) {
-        axios
-          .put("https://radiant-cove-15822.herokuapp.com/api/todo/" + todo_id, {
-            todo: this.todo,
-          })
-          .then((res) => {
-            this.$store.dispatch("changeTodo", {
-              todo: this.todo,
-            });
-            console.log(res);
-            alert("Updated successfully.");
-          });
-      }
-      this.active = !this.active;
+    put(todo) {
+        axios({
+          method:'put',
+          url: 'https://radiant-cove-15822.herokuapp.com/api/todo', 
+          data: JSON.stringify(todo.id),
+          dataType: 'json',
+          contentType: "application/json;charset=utf-8",
+          
+          
+        })
     },
-    del(todo_id) {
-      const result = this.todos[todo_id].todo.some((value) => {
-        return value.todo_id == this.$store.state.todo.todo_id;
-      });
-      if (result) {
-        this.todos[todo_id].todo.forEach((element) => {
-          if (element.todo_id == this.$store.state.todo.itodo_d) {
-            axios({
-              method: "delete",
-              url: "https://radiant-cove-15822.herokuapp.com/api/todo/",
-              data: {
-                todo_id: this.todos[todo_id].item.todo_id,
-              },
-            }).then((res) => {
-              console.log(res);
-              this.$router.go({
-                path: this.$router.currentRoute.path,
-                force: true,
-              });
-            });
-          }
-        });
-      } else {
-        axios
-          .post("https://radiant-cove-15822.herokuapp.com/api/todo/", {
-            todo_id:this.todos[todo_id].item.todo_id,
-          })
-          .then((res) => {
-            console.log(res);
-            this.$router.go({
-              path:this.$router.currentRoute.path,
-              force: true,
-            });
-          })
-      }
+    del(todo) {
+      axios({
+        method: "delete",
+        url: 'https://radiant-cove-15822.herokuapp.com/api/todo',
+        todo: JSON.stringify(todo.id),
+        data: todo,
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
     },
+
+    
+    
+    get() {
+      axios
+      .get("https://radiant-cove-15822.herokuapp.com/api/todo", {
+        id: this.$store.state.id,
+        todo: this.todo,
+      })
+      .then((result) => {
+        this.todos = result.data.data
+      })
+      
+    }    
+  },
+  mounted: function() {
+    this.get()
   }
 }
 

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import store from '../store/index'
 import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
@@ -19,6 +19,20 @@ const router = new VueRouter({
   routes,
 });
 
-
+router.beforeEach((to, from, next) => {
+  if (
+    to.matched.some((record) => record.meta.todo) &&
+    !store.state.todo
+  ) {
+    next({
+      path: "/",
+      query: {
+        redirect: to.fullPath,
+      },
+    });
+  } else {
+    next();
+  }
+})
 
 export default router
