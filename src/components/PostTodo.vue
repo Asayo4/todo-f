@@ -12,11 +12,11 @@
       <h3>Your Todo Lists!</h3>
       <div class="flex">
         <div>
-          <div v-for="(todo, id) in todos" :key="id">
-            <p class="id">{{ todo.id }}.</p>
-            <input class="todoContents" :value="todo.todo"/>
-            <button id="update" @click="put(todo)">Update</button>
-            <button id="del" @click="del(todo)">Delete</button>
+          <div v-for="item of todos" :key="`first-${item.id}`">
+            <p class="id">{{ item.id }}.</p>
+            <input class="todoContents" :value="item.todo"/>
+            <button id="update"  @click="put(item)">Update</button>
+            <button id="del" @click="del(item)">Delete</button>
           </div>
         </div>
       </div>
@@ -27,12 +27,23 @@
 
 <script>
 import axios from 'axios';
-
+//import { set } from 'vue/types/umd';
 export default {
+  props:{
+    id: Number,
+    item: String,
+    index: Number,
+    i: Number,
+    todo:String
+  },
   data() {
     return {
-      todos: [],
+      todos: {
+        id:"",
+        todo:""
+      },
       todo_form: "",
+      active: true,
     };
   },
   methods: {
@@ -41,7 +52,7 @@ export default {
         alert("Please enter the contents.");
       } else {
         axios
-          .post("https://radiant-cove-15822.herokuapp.com/api/todo", {
+          .post("https://radiant-cove-15822.herokuapp.com/api/todos", {
             id: this.$store.state.id,
             todo: this.todo_form,
           })
@@ -57,36 +68,43 @@ export default {
           });
       }
     },
-    put(todo) {
-        axios({
-          method:'put',
-          url: 'https://radiant-cove-15822.herokuapp.com/api/todo', 
-          data: JSON.stringify(todo.id),
-          dataType: 'json',
-          contentType: "application/json;charset=utf-8",
-          
-          
-        })
-    },
-    del(todo) {
-      axios({
-        method: "delete",
-        url: 'https://radiant-cove-15822.herokuapp.com/api/todo',
-        todo: JSON.stringify(todo.id),
-        data: todo,
-        headers: {
-          "Content-Type": "application/json",
-        }
-      })
+    
+    put(item) {
+      //var data1 = {
+        //todo: item.todo
+      //};
+      axios.put("https://radiant-cove-15822.herokuapp.com/api/todos/" + item.id)
+      .then((res) => {
+        this.todos.splice(item.id, 1, item);
+        //this.todos = res.data.data
+        //this.todos.$set(this.item, 'todo', item.todo);
+        //var Item = this.item
+        //this.splice(this.todos, Item.id, this.data1)
+        this.get();
+        console.log(JSON.stringify(res));
+        alert("Updated successfully")
+      });
     },
 
-    
-    
+    del(item) {
+      axios.delete(
+        'https://radiant-cove-15822.herokuapp.com/api/todos/' +
+        item.id, {
+          id: this.id
+        }
+      )
+      .then((res) => {
+        console.log(JSON.stringify(res));
+        alert("Deteted successfully");
+        this.todos = res.data.data
+      });
+    },
+
+
     get() {
       axios
-      .get("https://radiant-cove-15822.herokuapp.com/api/todo", {
+      .get("https://radiant-cove-15822.herokuapp.com/api/todos", {
         id: this.$store.state.id,
-        todo: this.todo,
       })
       .then((result) => {
         this.todos = result.data.data
@@ -96,7 +114,7 @@ export default {
   },
   mounted: function() {
     this.get()
-  }
+  },
 }
 
 </script>
@@ -108,14 +126,15 @@ export default {
 }
 
 #cards {
+display: flex;
+}
+
+.card1 {
   width: 65%;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-.card1 {
   background-color:  #1d3781 ;
   padding: 20px;
 }
@@ -149,6 +168,11 @@ export default {
 }
 
 .card2 {
+  width: 65%;
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, 0);
   background-color: gray;
   padding: 20px;
 }
