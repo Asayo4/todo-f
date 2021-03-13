@@ -14,7 +14,7 @@
         <div>
           <div v-for="(item, id) of todos" :key="`first-${id}`">
             <p class="id">{{ id + 1 }}.</p>
-            <input class="todoContents" :value="(item.todo)"/>
+            <input class="todoContents" v-model="item.todo"/>
             <button id="update"  @click="put(item)">Update</button>
             <button id="del" @click="del(item)">Delete</button>
           </div>
