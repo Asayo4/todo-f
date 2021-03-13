@@ -95,7 +95,7 @@ export default {
       )
       .then((res) => {
         console.log(JSON.stringify(res));
-        alert("Deteted successfully");
+        alert("Deleted successfully");
         this.todos = res.data.data
       });
     },
