@@ -12,9 +12,9 @@
       <h3>Your Todo Lists!</h3>
       <div class="flex">
         <div>
-          <div v-for="item of todos" :key="`first-${item.id}`">
-            <p class="id">{{ item.id }}.</p>
-            <input class="todoContents" :value="item.todo"/>
+          <div v-for="(item, id) of todos" :key="`first-${id}`">
+            <p class="id">{{ id + 1 }}.</p>
+            <input class="todoContents" :value="(item.todo)"/>
             <button id="update"  @click="put(item)">Update</button>
             <button id="del" @click="del(item)">Delete</button>
           </div>
@@ -32,8 +32,6 @@ export default {
   props:{
     id: Number,
     item: String,
-    index: Number,
-    i: Number,
     todo:String
   },
   data() {
@@ -73,17 +71,19 @@ export default {
       //var data1 = {
         //todo: item.todo
       //};
-      axios.put("https://radiant-cove-15822.herokuapp.com/api/todos/" + item.id)
-      .then((res) => {
-        this.todos.splice(item.id, 1, item);
+      axios.put("https://radiant-cove-15822.herokuapp.com/api/todos/" + item.id, {todo: item.todo}
+      )
+      
+      //.then((res) => {
+       // this.todos.splice(item.id, 1, item);
         //this.todos = res.data.data
         //this.todos.$set(this.item, 'todo', item.todo);
         //var Item = this.item
         //this.splice(this.todos, Item.id, this.data1)
-        this.get();
-        console.log(JSON.stringify(res));
+        //this.get();
+        //console.log(JSON.stringify(res));
         alert("Updated successfully")
-      });
+      //});
     },
 
     del(item) {
